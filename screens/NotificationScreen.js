@@ -8,9 +8,11 @@ import {
   StyleSheet,
   useColorScheme,
   View,
+  ActivityIndicator,
+  Text
 } from 'react-native';
-import { Container, Header, Content, List, ListItem, Left, Body, Right, Thumbnail, Text, Item, Input, Icon, Button } from 'native-base';
-
+import { Container, Header, Content, List, ListItem, Left, Body, Right, Thumbnail, Item, Input, Icon, Button } from 'native-base';
+import _ from 'lodash';
 
 export default class NotificationScreen extends React.Component {
 
@@ -20,7 +22,8 @@ export default class NotificationScreen extends React.Component {
       data: [],
       fullData: [],
       loading: false,
-      error: null
+      error: null,
+      query: ""
     }
   }
 
@@ -28,7 +31,7 @@ export default class NotificationScreen extends React.Component {
     this.requestAPI()
   }
 
-  requestAPI = () => {
+  requestAPI = _.debounce(() => {
     this.setState({loading: true})
     const apiURL = "http://172.20.10.5/API/remindapi.php"
     fetch(apiURL).then((res) => res.json())
@@ -41,14 +44,21 @@ export default class NotificationScreen extends React.Component {
     }).catch(error => {
       this.setState({error,loading: false})
     })
-  }
+  }, 250)
 
   _renderItem = ({ item, index }) => {
     return (
-      <ListItem avatar>
+      <ListItem style={{
+        marginHorizontal: 15,
+        marginVertical: 5,
+        borderRadius: 10,
+        borderColor: "#ddd",
+        borderWidth: 1,
+        padding: 10
+        }}>
         <Body>
-          <Text>{item.time_alert}</Text>
-          <Text note>{item.meal_alert}</Text>
+          <Text style={styles.sectionTitle}>{item.time_alert}</Text>
+          <Text note>{item.meal_alert }</Text>
         </Body>
         <Right>
           <Text note>3:43 pm</Text>
@@ -57,14 +67,34 @@ export default class NotificationScreen extends React.Component {
     )
   }
 
+  renderFooter = () =>{
+    if (!this.state.loading) return null
+    return (
+      <View style={{paddingVertical: 20, borderTopWidth: 1, borderColor: "EE6A59"}}>
+        <ActivityIndicator animating size="large"/>
+      </View>
+    )
+  }
+
+  handleSearch = () => {
+    const formattedQuery = text.toLowercase()
+    const data = _.filter(this.state.fullData, photo => {
+      if(photo.title.includes(formattedQuery)){
+        return true
+      } 
+      return false
+    })
+    this.setState({data, query: text})
+  }
 
   render() {
     return (
-      <Container>
+      // <View style={styles.container}>
+        <Container>
         <Header searchBar rounded>
           <Item>
             <Icon name="ios-search" />
-            <Input placeholder="Search" />
+            <Input placeholder="Search" onChangeText={this.handleSearch}/>
             <Icon name="ios-people" />
           </Item>
         </Header>
@@ -74,10 +104,11 @@ export default class NotificationScreen extends React.Component {
             data={this.state.data}
             renderItem={this._renderItem}
             keyExtractor={(item, index) => index.toString()}
+            ListFooterComponent={this.renderFooter}
           />
         </List>
-      </Container>
-
+        </Container>
+      // </View>
     )
   }
 };
@@ -88,6 +119,13 @@ const styles = StyleSheet.create({
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,
+  },
+  container: {
+    flex: 1,
+    //flexDirection: 'column',
+    backgroundColor: '#50A3A4',
+    //justifyContent: 'flex-start',
+    //alignItems: 'center',
   },
   sectionTitle: {
     fontSize: 24,
