@@ -158,7 +158,7 @@ const NotificationStackScreen = ({ navigation }) => (
       fontWeight: '100'
     }
   }}>
-    <NotificationStack.Screen name="Notification" component={NotificationScreen} options={{
+    <NotificationStack.Screen name="Alert history" component={NotificationScreen} options={{
       headerLeft: () => (
         <Icon.Button name="reorder-four" size={25} backgroundColor="#3A3F58"
           onPress={() => navigation.openDrawer()}></Icon.Button>
