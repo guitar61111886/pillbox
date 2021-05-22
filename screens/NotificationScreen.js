@@ -11,15 +11,14 @@ import {
   ActivityIndicator,
   Text
 } from 'react-native';
-import { Container, Header, Content, List, ListItem, Left, Body, Right, Thumbnail, Item, Input, Icon, Button } from 'native-base';
-import _ from 'lodash';
-
+import { Container, Header, Content,List, ListItem, Left, Body, Right, Thumbnail, Item, Input, Icon, Button } from 'native-base';
+//import _ from 'lodash';
+// import {ListItem,searchBar} from 'react-native-elements';
 export default class NotificationScreen extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      data: [],
       fullData: [],
       loading: false,
       error: null,
@@ -27,38 +26,89 @@ export default class NotificationScreen extends React.Component {
     }
   }
 
+  // constructor(props) {
+  //   super(props);
+
+  //   this.state = {
+  //     time_alert1: [],
+  //     meal_alert1: [],
+  //     isLoading: true
+  //   };
+  // }
+
+  
+  // componentDidMount() {
+  //   fetch('http://172.20.10.5/API/remindapi.php',{
+  //     method: 'POST',
+  //     headers: {
+  //       Accept: 'application/json',
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({
+  //       time_alert: this.state.time_alert1,
+  //       meal_alert: this.state.meal_alert1
+  //     }),
+  //   })
+  //     // .then((response) => response.json())
+  //     .then((json) => {
+  //       console.log('JSON', json)
+  //       this.setState({
+  //         loading: false,
+  //         data: json,
+  //         data1: json
+  //       })
+  //       // Alert.alert(responseJson);
+  //     })
+  //     // .then((json) => {
+  //     //   return json.time_alert,
+  //     //    json.meal_alert
+  //     // })
+  //     .catch((error) => {
+  //       console.error(error)
+  //       })
+  // };
+  // // state ={
+  // //   data: []
+  // // }
+
   componentDidMount(){
     this.requestAPI()
   }
 
-  requestAPI = _.debounce(() => {
+  requestAPI = () => {
     this.setState({loading: true})
     const apiURL = "http://172.20.10.5/API/remindapi.php"
     fetch(apiURL).then((res) => res.json())
-    .then((resJSON) =>{
+    .then((json) =>{
+      console.log('JSON',json)
       this.setState({
         loading: false,
-        data: resJSON,
-        fullData: resJSON
+        data: json,
+       // fullData: json,
+        filterPill: json
       })
     }).catch(error => {
+      console.error(error);
+      this.setState({data: []})
       this.setState({error,loading: false})
     })
-  }, 250)
+  }
 
   _renderItem = ({ item, index }) => {
     return (
+
       <ListItem style={{
+        backgroundColor: '#FFD180',
         marginHorizontal: 15,
         marginVertical: 5,
         borderRadius: 10,
-        borderColor: "#ddd",
+        borderColor: "#6D4C41",
         borderWidth: 1,
         padding: 10
         }}>
         <Body>
-          <Text style={styles.sectionTitle}>{item.time_alert}</Text>
-          <Text note>{item.meal_alert }</Text>
+          <Text style={styles.sectionTitle}>{item.meal_alert}</Text>
+          <Text >{item.time_alert }</Text>
         </Body>
         <Right>
           <Text note>3:43 pm</Text>
@@ -76,39 +126,51 @@ export default class NotificationScreen extends React.Component {
     )
   }
 
-  handleSearch = () => {
-    const formattedQuery = text.toLowercase()
-    const data = _.filter(this.state.fullData, photo => {
-      if(photo.title.includes(formattedQuery)){
-        return true
-      } 
-      return false
-    })
-    this.setState({data, query: text})
+  onChangeText(text){
+    console.log('textChanged', text)
+    let filterArray = this.state.filterPill
+    let searchResult = filterArray.filter(data => 
+      data.meal_alert.includes(text)
+      )
+      this.setState({filterPill : searchResult})
   }
+
+  // handleSearch = (text) => {
+  //   const formattedQuery = text.toLowercase()
+  //   const data = _.filter(this.state.fullData, photo => {
+  //     if(photo.title.includes(formattedQuery)){
+  //       return true
+  //     } 
+  //     return false
+  //   })
+  //   this.setState({data, query: text})
+  // }
 
   render() {
     return (
-      // <View style={styles.container}>
-        <Container>
+      <View style={styles.container}>
+        {/* // <Container> */}
         <Header searchBar rounded>
           <Item>
             <Icon name="ios-search" />
-            <Input placeholder="Search" onChangeText={this.handleSearch}/>
+            {/* <Input placeholder="Search" onChangeText={this.handleSearch}/> */}
+            <Input placeholder="Search" onChangeText={text => this.onChangeText(text)}/>
             <Icon name="ios-people" />
           </Item>
         </Header>
 
         <List>
           <FlatList
-            data={this.state.data}
+             data={this.state.data}
+            // data={this.state.data1}
+            // data={data}
             renderItem={this._renderItem}
             keyExtractor={(item, index) => index.toString()}
             ListFooterComponent={this.renderFooter}
           />
         </List>
-        </Container>
-      // </View>
+        {/* </Container> */}
+       </View>
     )
   }
 };
