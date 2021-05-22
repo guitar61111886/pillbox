@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { View, Button, Platform, StyleSheet, Text } from 'react-native';
+import { View, Button, Platform, StyleSheet, Text, Picker } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 const HomeScreen = ({ navigation }) => {
   const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
 
+  const [selectedValue, setSelectedValue] = useState("java");
   // componentWillMount() {
   //   this._panResponder = PanResponder.create({
   //     onStartShouldSetPanResponder: (e) => { console.log('onStartShouldSetPanResponder'); return true; },
@@ -44,10 +46,18 @@ const HomeScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.instructions}>
-        <Button onPress={showDatepicker} title="Show date picker!" />
+        <Button
+          color="#F9AC67"
+          onPress={showDatepicker}
+          title="Show date picker!"
+        />
       </View>
       <View style={styles.instructions}>
-        <Button onPress={showTimepicker} title="Show time picker!" />
+        <Button
+          color="#F9AC67"
+          onPress={showTimepicker}
+          title="Show time picker!"
+        />
       </View>
       {show && (
         <DateTimePicker
@@ -59,6 +69,23 @@ const HomeScreen = ({ navigation }) => {
           onChange={onChange}
         />
       )}
+
+        <View style={styles.pickerpad}>
+      <Picker
+        selectedValue={selectedValue}
+        style={{ height: 50, width: 150 }}
+        onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+      >
+        <Picker.Item label="Select " value="java" />
+        <Picker.Item label="S1" value="S1" />
+        <Picker.Item label="S2" value="S2" />
+        <Picker.Item label="S3" value="S3" />
+        <Picker.Item label="S4" value="S4" />
+        <Picker.Item label="S5" value="S5" />
+        <Picker.Item label="S6" value="S6" />
+        <Picker.Item label="S7" value="S7" />
+      </Picker>
+      </View>
     </View>
   );
 };
@@ -101,13 +128,19 @@ const styles = StyleSheet.create({
   instructions: {
     textAlign: 'center',
     color: '#333333',
-    marginBottom: 5
+    marginTop: 20
   },
 
   ss: {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: "#50A3A4"
+  },
+
+  pickerpad:{
+    marginTop: 5,
+    paddingTop: 3,
+    backgroundColor: '#ece6cd',
   }
 });
 

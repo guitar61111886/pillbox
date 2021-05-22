@@ -29,7 +29,8 @@
     "react-native-screens": "^3.2.0",
     "react-native-tab-view": "^3.0.1",
     "react-native-ui-xg": "^0.0.6",
-    "react-native-vector-icons": "^7.1.0"
+    "react-native-vector-icons": "^7.1.0",
+    "react-native-woodpicker": "^0.2.8"
   },
   "devDependencies": {
     "@babel/core": "7.14.3",
