@@ -97,7 +97,7 @@ export default class NotificationScreen extends React.Component {
         <Text style={styles.SettimeText}>ข้อมูลส่วนตัว</Text>
       </View>
         <View style={styles.profilepic}>
-          <Image source={require('../../project/src/profile.jpg')}
+          <Image source={require('../../project/src/cat.jpg')}
             style={{ width: 150, height: 150, marginTop: 20}}
           />
         </View>

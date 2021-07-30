@@ -1,29 +1,61 @@
 import React, { useState } from 'react';
-import { View, Button, Platform, StyleSheet, Text, Picker } from 'react-native';
+import { View, Button, Platform, StyleSheet, Text, Picker, ScrollView, Image, FlatList } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
+import { Card, Divider, FAB } from 'react-native-paper';
+// import { constants } from 'jest-config';
 
 const HomeScreen = ({ navigation }) => {
+  const data = [
+    { id: 1, name: "เช้าก่อนอาหาร", slave: "S1", time: "07:30" },
+    { id: 2, name: "เช้าหลังอาหาร", slave: "S2", time: "08:30" },
+    { id: 3, name: "เที่ยงก่อนอาหาร", slave: "S3", time: "11:30" },
+    { id: 4, name: "เช้าหลังอาหาร", slave: "S4", time: "12:30" },
+    { id: 5, name: "เช้าก่อนอาหาร", slave: "S1", time: "07:30" },
+    { id: 6, name: "เช้าหลังอาหาร", slave: "S2", time: "08:30" },
+    { id: 7, name: "เที่ยงก่อนอาหาร", slave: "S3", time: "11:30" },
+    { id: 8, name: "เช้าหลังอาหาร", slave: "S4", time: "12:30" },
+  ]
+
+  const renderList = ((item) => {
+    return (
+      <View>
+        <Card style={styles.mycard}>
+          <View style={styles.cardView}>
+            <Image
+              style={{ width: 70, height: 70, borderRadius: 100 }}
+              source={{ uri: "https://images.unsplash.com/photo-1597838816882-4435b1977fbe?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=474&q=80" }}
+            />
+
+            <View style={{ marginLeft: 10 }}>
+              <Text style={styles.textCard}>{item.name}</Text>
+              <Text style={styles.textCard}>{item.slave}</Text>
+              <Text style={styles.textCard}>{item.time}</Text>
+            </View>
+          </View>
+        </Card>
+        <Divider />
+      </View>
+    );
+  })
+
   const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
+  const [text, setText] = useState('Empty');
 
-  const [selectedValue, setSelectedValue] = useState("java");
-  // componentWillMount() {
-  //   this._panResponder = PanResponder.create({
-  //     onStartShouldSetPanResponder: (e) => { console.log('onStartShouldSetPanResponder'); return true; },
-  //     onMoveShouldSetPanResponder: (e) => { console.log('onMoveShouldSetPanResponder'); return true; },
-  //     onPanResponderGrant: (e) => console.log('onPanResponderGrant'),
-  //     onPanResponderMove: (e) => console.log('onPanResponderMove'),
-  //     onPanResponderRelease: (e) => console.log('onPanResponderRelease'),
-  //     onPanResponderTerminate: (e) => console.log('onPanResponderTerminate')
-  //   });
-  // }
+  // const [selectedValue, setSelectedValue] = useState("java");
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
+
+    let tempDate = new Date(currentDate);
+    let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
+    let fTime = tempDate.getHours() + ':' + tempDate.getMinutes();
+    setText(fDate + ' ' + fTime)
+
+    console.log(fDate + '(' + fTime + ')')
   };
 
   const showMode = (currentMode) => {
@@ -40,25 +72,40 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
+
     <View style={styles.container}>
+      
       <View style={styles.paddingSettime}>
         <Text style={styles.SettimeText}>Set Time</Text>
       </View>
+      <Text style={{ textAlign: 'center', fontSize: 26, color: 'white', marginTop: 12, marginVertical: 5 }}>ตั้งค่าเวลากินยา</Text>
+      <Divider />
+      {/* {renderList} */}
+      <FlatList
+        data={data}
+        renderItem={({ item }) => {
+          return renderList(item)
+        }}
+        keyExtractor={item => `${item.id}`}
+      />
 
-      <View style={styles.instructions}>
-        <Button
-          color="#F9AC67"
-          onPress={showDatepicker}
-          title="Show date picker!"
-        />
-      </View>
-      <View style={styles.instructions}>
-        <Button
-          color="#F9AC67"
-          onPress={showTimepicker}
-          title="Show time picker!"
-        />
-      </View>
+      <FAB
+        style={styles.fab}
+        small={false}
+        icon="plus"
+        theme={{ colors: { accent: '#a657cf' } }}
+        onPress={() => console.log('Pressed')}
+      />
+
+      <Text style={{ fontWeight: 'bold', fontSize: 20 }}>{text}</Text>
+        <View style={styles.instructions}>
+          <Button color="#000000" marginLeft='80'  onPress={showDatepicker} title="Date Picker" />
+        </View>
+
+        <View style={styles.instructions}>
+          <Button color="#F9AC67" onPress={showTimepicker} title="Time picker" />
+        </View>
+      
       {show && (
         <DateTimePicker
           testID="dateTimePicker"
@@ -70,7 +117,7 @@ const HomeScreen = ({ navigation }) => {
         />
       )}
 
-        <View style={styles.pickerpad}>
+      {/* <View style={styles.pickerpad}>
       <Picker
         selectedValue={selectedValue}
         style={{ height: 50, width: 150 }}
@@ -85,7 +132,7 @@ const HomeScreen = ({ navigation }) => {
         <Picker.Item label="S6" value="S6" />
         <Picker.Item label="S7" value="S7" />
       </Picker>
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -97,8 +144,25 @@ const styles = StyleSheet.create({
     flex: 1,
     //flexDirection: 'column',
     backgroundColor: '#50A3A4',
-    //justifyContent: 'flex-start',
+    //justifyContent: 'center',
+    //alignItems: 'center',
+  },
+
+  containerbutton: {
+    flex: 1,
+    //flexDirection: 'column',
+    backgroundColor: '#000000',
     alignItems: 'center',
+    width: 80,
+    justifyContent: 'center',
+  },
+
+  containertri: {
+    flex: 1,
+    //flexDirection: 'column',
+    backgroundColor: '#50A3A4',
+    //justifyContent: 'center',
+    //alignItems: 'center',
   },
 
   SettimeText: {
@@ -127,8 +191,12 @@ const styles = StyleSheet.create({
   },
   instructions: {
     textAlign: 'center',
+    marginLeft:80,
+    marginRight:80,
+    borderRadius:90,
+    marginBottom:15,
     color: '#333333',
-    marginTop: 20
+    marginTop: 10,
   },
 
   ss: {
@@ -137,181 +205,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#50A3A4"
   },
 
-  pickerpad:{
-    marginTop: 5,
-    paddingTop: 3,
+  mycard: {
+    margin: 9,
     backgroundColor: '#ece6cd',
-  }
+    padding: 5,
+    marginTop: 10
+  },
+  cardView: {
+    flexDirection: "row",
+  },
+  textCard: {
+    fontSize: 20
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0
+  },
 });
-
-
-// import React, { Component } from 'react';
-// // import { NavigationContainer } from '@react-navigation/native';
-// // import { createStackNavigator } from '@react-navigation/stack';
-// // import { createDrawerNavigator } from '@react-navigation/drawer';
-// // import type {Node} from 'react';
-
-// import {
-//   SafeAreaView,
-//   ScrollView,
-//   StatusBar,
-//   StyleSheet,
-//   Text,
-//   useColorScheme,
-//   View,
-//   Button,
-//   PanResponder
-// } from 'react-native';
-// import DatePicker from 'react-native-datepicker';
-// import DateTimePicker from '@react-native-community/datetimepicker';
-// import { renderNode } from 'react-native-elements/dist/helpers';
-
-// // const HomeScreen = ({ navigation }) => {
-
-
-// class HomeScreen extends Component {
-
-//   constructor(props) {
-//     super(props)
-//     this.state = {
-//       date: '',
-//       time: '20:00',
-//       datetime: '2016-05-05 20:00',
-//       datetime1: '2016-05-05 20:00'
-//     };
-//   }
-
-//   componentWillMount() {
-//     this._panResponder = PanResponder.create({
-//       onStartShouldSetPanResponder: (e) => { console.log('onStartShouldSetPanResponder'); return true; },
-//       onMoveShouldSetPanResponder: (e) => { console.log('onMoveShouldSetPanResponder'); return true; },
-//       onPanResponderGrant: (e) => console.log('onPanResponderGrant'),
-//       onPanResponderMove: (e) => console.log('onPanResponderMove'),
-//       onPanResponderRelease: (e) => console.log('onPanResponderRelease'),
-//       onPanResponderTerminate: (e) => console.log('onPanResponderTerminate')
-//     });
-//   }
-
-//   render() {
-//     return (
-//       <View style={styles.container}>
-//         <View style={styles.paddingSettime}>
-//           <Text style={styles.SettimeText}>Set Time</Text>
-//         </View>
-
-//         <View style={styles.paddingSettime}>
-//         <DatePicker
-//           style={{ width: 200 }}
-//           date={this.state.date}
-//           mode="date"
-//           placeholder="placeholder"
-//           format="YYYY-MM-DD"
-//           minDate="2016-05-01"
-//           maxDate="2016-06-01"
-//           confirmBtnText="Confirm"
-//           cancelBtnText="Cancel"
-//           // iconSource={require('./google_calendar.png')}
-//           onDateChange={(date) => { this.setState({ date: date }); }}
-//         />
-//         <Text style={styles.instructions}>date: {this.state.date}</Text>
-//         <DatePicker
-//           style={{ width: 200 }}
-//           date={this.state.time}
-//           mode="time"
-//           format="HH:mm"
-//           confirmBtnText="Confirm"
-//           cancelBtnText="Cancel"
-//           minuteInterval={10}
-//           onDateChange={(time) => { this.setState({ time: time }); }}
-//         />
-//         <Text style={styles.instructions}>time: {this.state.time}</Text>
-//         <DatePicker
-//           style={{ width: 200 }}
-//           date={this.state.datetime}
-//           mode="datetime"
-//           format="YYYY-MM-DD HH:mm"
-//           confirmBtnText="Confirm"
-//           cancelBtnText="Cancel"
-//           showIcon={false}
-//           onDateChange={(datetime) => { this.setState({ datetime: datetime }); }}
-//         />
-//         <Text style={styles.instructions}>datetime: {this.state.datetime}</Text>
-//         <DatePicker
-//           style={{ width: 200 }}
-//           date={this.state.datetime1}
-//           mode="datetime"
-//           format="YYYY-MM-DD HH:mm"
-//           confirmBtnText="Confirm"
-//           cancelBtnText="Cancel"
-//           customStyles={{
-//             dateIcon: {
-//               position: 'absolute',
-//               left: 0,
-//               top: 4,
-//               marginLeft: 0
-//             },
-//             dateInput: {
-//               marginLeft: 36
-//             }
-//           }}
-//           minuteInterval={10}
-//           onDateChange={(datetime) => { this.setState({ datetime1: datetime }); }}
-//         />
-//         <Text style={styles.instructions}>datetime: {this.state.datetime1}</Text>
-
-
-//         </View>
-//         {/* <Button
-//           title="go to remind screen"
-//           onPress={() => navigation.navigate("Notification")}
-//         /> */}
-//       </View>
-//     );
-//   }
-
-// }
-// // };
-
-// export default HomeScreen;
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     //flexDirection: 'column',
-//     backgroundColor: '#50A3A4',
-//     //justifyContent: 'flex-start',
-//     alignItems: 'center',
-//   },
-
-//   SettimeText: {
-//     color: 'white',
-//     fontWeight: '300',
-//     fontSize: 30,
-//     fontFamily: "Cochin",
-//     textAlign: 'center',
-//   },
-
-//   paddingSettime: {
-//     padding: 10,
-//     backgroundColor: '#EE6A59',
-//     marginTop: 20,
-//     borderTopLeftRadius: 20,
-//     borderTopRightRadius: 20,
-//     borderBottomLeftRadius: 20,
-//     borderBottomRightRadius: 20,
-//     marginHorizontal: 90,
-//   },
-
-//   welcome: {
-//     fontSize: 20,
-//     textAlign: 'center',
-//     margin: 10
-//   },
-//   instructions: {
-//     textAlign: 'center',
-//     color: '#333333',
-//     marginBottom: 5
-//   },
-
-//   ss: { alignItems: 'center', justifyContent: 'center', backgroundColor: "#50A3A4" }
-// });
