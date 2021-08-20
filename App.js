@@ -1,91 +1,4 @@
-// /**
-//  * Sample React Native App
-//  * https://github.com/facebook/react-native
-//  *
-//  * @format
-//  * @flow strict-local
-//  */
-
-// import React from 'react';
-// import type { Node } from 'react';
-// import {
-//   SafeAreaView,
-//   ScrollView,
-//   StatusBar,
-//   StyleSheet,
-//   useColorScheme,
-//   View,
-// } from 'react-native';
-// import { Container, Header, Content, List, ListItem, Left, Body, Right, Thumbnail, Text, Item, Input, Icon, Button } from 'native-base';
-
-
-// import {
-//   Colors,
-//   DebugInstructions,
-//   LearnMoreLinks,
-//   ReloadInstructions,
-// } from 'react-native/Libraries/NewAppScreen';
-
-
-// const App: () => Node = () => {
-
-//   constructor(props) {
-//     super(props)
-//     this.state = {
-//       data: []
-//     }
-//   }
-
-//   render(){
-//     return (
-//       <Container>
-//         <Header searchBar rounded>
-//           <Item>
-//             <Icon name="ios-search" />
-//             <Input placeholder="Search" />
-//             <Icon name="ios-people" />
-//           </Item>
-//         </Header>
-
-//         <List>
-//           <ListItem avatar>
-//             <Body>
-//               <Text>Kumar Pratik</Text>
-//               <Text note>Doing what you like will always keep you happy . .</Text>
-//             </Body>
-//             <Right>
-//               <Text note>3:43 pm</Text>
-//             </Right>
-//           </ListItem>
-//         </List>
-//       </Container>
-
-//     )
-//   }
-// };
-
-// const styles = StyleSheet.create({
-//   sectionContainer: {
-//     marginTop: 32,
-//     paddingHorizontal: 24,
-//   },
-//   sectionTitle: {
-//     fontSize: 24,
-//     fontWeight: '600',
-//   },
-//   sectionDescription: {
-//     marginTop: 8,
-//     fontSize: 18,
-//     fontWeight: '400',
-//   },
-//   highlight: {
-//     fontWeight: '700',
-//   },
-// });
-
-// export default App;
-
-import React from 'react';
+import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -106,6 +19,8 @@ import {
 import HomeScreen from './screens/HomeScreen';
 import NotificationScreen from './screens/NotificationScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import CreateMeal from './screens/CreateMeal';
+import Information from './screens/Information';
 
 // const HomeScreen = ({navigation}) => {
 //   return (
@@ -140,13 +55,27 @@ const HomeStackScreen = ({ navigation }) => (
       fontWeight: '100'
     }
   }}>
-    <HomeStack.Screen name="Pillbox" component={HomeScreen} 
-    options={{ title: 'Time Table', 
-    headerLeft: () => (
-      <Icon.Button name="menu-outline" size={25} backgroundColor="#3A3F58"
-        onPress={() => navigation.openDrawer()}></Icon.Button>
-    )
-      }}/>
+    <HomeStack.Screen name="Home" component={HomeScreen}
+      options={{
+        title: 'Set Time',
+        headerLeft: () => (
+          <Icon.Button name="menu-outline" size={25} backgroundColor="#3A3F58"
+            onPress={() => navigation.openDrawer()}></Icon.Button>
+        )
+      }} />
+
+    <HomeStack.Screen
+      name="Create"
+      component={CreateMeal}
+    // options={{...myOptions,title:"Create Meal"}}
+    />
+
+    <HomeStack.Screen
+      name="Information"
+      component={Information}
+    // options={myOptions}
+    // options={{...myOptions,title:"Information"}}
+    />
   </HomeStack.Navigator>
 );
 
@@ -175,13 +104,14 @@ const ProfileStackScreen = ({ navigation }) => (
       fontWeight: '100'
     }
   }}>
-    <ProfileStack.Screen name="Pillbox" component={ProfileScreen} 
-    options={{ title: 'Profile', 
-    headerLeft: () => (
-      <Icon.Button name="menu-outline" size={25} backgroundColor="#3A3F58"
-        onPress={() => navigation.openDrawer()}></Icon.Button>
-    )
-      }}/>
+    <ProfileStack.Screen name="Pillbox" component={ProfileScreen}
+      options={{
+        title: 'Profile',
+        headerLeft: () => (
+          <Icon.Button name="menu-outline" size={25} backgroundColor="#3A3F58"
+            onPress={() => navigation.openDrawer()}></Icon.Button>
+        )
+      }} />
   </ProfileStack.Navigator>
 );
 

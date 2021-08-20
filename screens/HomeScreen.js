@@ -1,33 +1,62 @@
-import React, { useState } from 'react';
-import { View, Button, Platform, StyleSheet, Text, Picker, ScrollView, Image, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Button, Alert, StyleSheet, Text, Picker, ScrollView, Image, FlatList } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Card, Divider, FAB } from 'react-native-paper';
+import CreateMeal from './CreateMeal';
 // import { constants } from 'jest-config';
 
 const HomeScreen = ({ navigation }) => {
-  const data = [
-    { id: 1, name: "เช้าก่อนอาหาร", slave: "S1", time: "07:30" },
-    { id: 2, name: "เช้าหลังอาหาร", slave: "S2", time: "08:30" },
-    { id: 3, name: "เที่ยงก่อนอาหาร", slave: "S3", time: "11:30" },
-    { id: 4, name: "เช้าหลังอาหาร", slave: "S4", time: "12:30" },
-    { id: 5, name: "เช้าก่อนอาหาร", slave: "S1", time: "07:30" },
-    { id: 6, name: "เช้าหลังอาหาร", slave: "S2", time: "08:30" },
-    { id: 7, name: "เที่ยงก่อนอาหาร", slave: "S3", time: "11:30" },
-    { id: 8, name: "เช้าหลังอาหาร", slave: "S4", time: "12:30" },
-  ]
+
+  // const data = [
+  //   { id: 1, name: "เช้าก่อนอาหาร", slave: "S1", time: "07:30" },
+  //   { id: 2, name: "เช้าหลังอาหาร", slave: "S2", time: "08:30" },
+  //   { id: 3, name: "เที่ยงก่อนอาหาร", slave: "S3", time: "11:30" },
+  //   { id: 4, name: "เช้าหลังอาหาร", slave: "S4", time: "12:30" },
+  //   { id: 5, name: "เช้าก่อนอาหาร", slave: "S1", time: "07:30" },
+  //   { id: 6, name: "เช้าหลังอาหาร", slave: "S2", time: "08:30" },
+  //   { id: 7, name: "เที่ยงก่อนอาหาร", slave: "S3", time: "11:30" },
+  //   { id: 8, name: "เช้าหลังอาหาร", slave: "S4", time: "12:30" },
+  // ]
+  const [data, setData] = useState([])
+  const [loading, setloading] = useState(true)
+
+  const fetchData = () => {
+    fetch("http://172.20.10.5:3000/")
+      .then(res => res.json())
+      .then(results => {
+        // console.log(results)
+        setData(results)
+        setloading(false)
+      }).catch(err => {
+        Alert.alert("Someting went wrong")
+      })
+  }
+
+  useEffect(() => {
+    fetchData()
+    // fetch("http://172.20.10.5:3000/")
+    //     .then(res => res.json())
+    //     .then(results => {
+    //         console.log(results)
+    //         setData(results)
+    //         setloading(false)
+    //     })
+  }, [])
 
   const renderList = ((item) => {
     return (
       <View>
-        <Card style={styles.mycard}>
+        <Card style={styles.mycard}
+          onPress={() => navigation.navigate("Information", { item })}
+        >
           <View style={styles.cardView}>
             <Image
               style={{ width: 70, height: 70, borderRadius: 100 }}
-              source={{ uri: "https://images.unsplash.com/photo-1597838816882-4435b1977fbe?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=474&q=80" }}
+              source={{ uri: "https://i.pinimg.com/736x/82/a6/ba/82a6bac99d3a9c2942724f5fc8dfca86.jpg" }}
             />
 
             <View style={{ marginLeft: 10 }}>
-              <Text style={styles.textCard}>{item.name}</Text>
+              <Text style={styles.textCard}>{item.meal}</Text>
               <Text style={styles.textCard}>{item.slave}</Text>
               <Text style={styles.textCard}>{item.time}</Text>
             </View>
@@ -38,47 +67,47 @@ const HomeScreen = ({ navigation }) => {
     );
   })
 
-  const [date, setDate] = useState(new Date(1598051730000));
-  const [mode, setMode] = useState('date');
-  const [show, setShow] = useState(false);
-  const [text, setText] = useState('Empty');
+  // const [date, setDate] = useState(new Date(1598051730000));
+  // const [mode, setMode] = useState('date');
+  // const [show, setShow] = useState(false);
+  // const [text, setText] = useState('Empty');
 
-  // const [selectedValue, setSelectedValue] = useState("java");
+  // // const [selectedValue, setSelectedValue] = useState("java");
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
-    setDate(currentDate);
+  // const onChange = (event, selectedDate) => {
+  //   const currentDate = selectedDate || date;
+  //   setShow(Platform.OS === 'ios');
+  //   setDate(currentDate);
 
-    let tempDate = new Date(currentDate);
-    let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
-    let fTime = tempDate.getHours() + ':' + tempDate.getMinutes();
-    setText(fDate + ' ' + fTime)
+  //   let tempDate = new Date(currentDate);
+  //   let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
+  //   let fTime = tempDate.getHours() + ':' + tempDate.getMinutes();
+  //   setText(fDate + ' ' + fTime)
 
-    console.log(fDate + '(' + fTime + ')')
-  };
+  //   console.log(fDate + '(' + fTime + ')')
+  // };
 
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
+  // const showMode = (currentMode) => {
+  //   setShow(true);
+  //   setMode(currentMode);
+  // };
 
-  const showDatepicker = () => {
-    showMode('date');
-  };
+  // const showDatepicker = () => {
+  //   showMode('date');
+  // };
 
-  const showTimepicker = () => {
-    showMode('time');
-  };
+  // const showTimepicker = () => {
+  //   showMode('time');
+  // };
 
   return (
 
     <View style={styles.container}>
-      
+
       <View style={styles.paddingSettime}>
-        <Text style={styles.SettimeText}>Set Time</Text>
+        <Text style={styles.SettimeText}>ตั้งค่าเวลากินยา</Text>
       </View>
-      <Text style={{ textAlign: 'center', fontSize: 26, color: 'white', marginTop: 12, marginVertical: 5 }}>ตั้งค่าเวลากินยา</Text>
+      {/* <Text style={{ textAlign: 'center', fontSize: 26, color: 'white', marginTop: 12, marginVertical: 5 }}>ตั้งค่าเวลากินยา</Text> */}
       <Divider />
       {/* {renderList} */}
       <FlatList
@@ -86,7 +115,9 @@ const HomeScreen = ({ navigation }) => {
         renderItem={({ item }) => {
           return renderList(item)
         }}
-        keyExtractor={item => `${item.id}`}
+        keyExtractor={item => item._id}
+        onRefresh={() => fetchData()}
+        refreshing={loading}
       />
 
       <FAB
@@ -94,19 +125,19 @@ const HomeScreen = ({ navigation }) => {
         small={false}
         icon="plus"
         theme={{ colors: { accent: '#a657cf' } }}
-        onPress={() => console.log('Pressed')}
+        onPress={() => navigation.navigate("Create")}
       />
 
-      <Text style={{ fontWeight: 'bold', fontSize: 20 }}>{text}</Text>
-        <View style={styles.instructions}>
-          <Button color="#000000" marginLeft='80'  onPress={showDatepicker} title="Date Picker" />
-        </View>
+      {/* <Text style={{ fontWeight: 'bold', fontSize: 20 }}>{text}</Text> */}
+      {/* <View style={styles.instructions}>
+        <Button color="#000000" marginLeft='80' onPress={showDatepicker} title="Date Picker" />
+      </View> */}
 
-        <View style={styles.instructions}>
-          <Button color="#F9AC67" onPress={showTimepicker} title="Time picker" />
-        </View>
-      
-      {show && (
+      {/* <View style={styles.instructions}>
+        <Button color="#F9AC67" onPress={showTimepicker} title="Time picker" />
+      </View> */}
+
+      {/* {show && (
         <DateTimePicker
           testID="dateTimePicker"
           value={date}
@@ -115,7 +146,7 @@ const HomeScreen = ({ navigation }) => {
           display="default"
           onChange={onChange}
         />
-      )}
+      )} */}
 
       {/* <View style={styles.pickerpad}>
       <Picker
@@ -191,10 +222,10 @@ const styles = StyleSheet.create({
   },
   instructions: {
     textAlign: 'center',
-    marginLeft:80,
-    marginRight:80,
-    borderRadius:90,
-    marginBottom:15,
+    marginLeft: 80,
+    marginRight: 80,
+    borderRadius: 90,
+    marginBottom: 15,
     color: '#333333',
     marginTop: 10,
   },
